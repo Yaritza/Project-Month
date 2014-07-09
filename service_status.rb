@@ -26,23 +26,28 @@ class Service
 		#Following line isolates the subway specific data (first 10 are all subways only)
 			@doc.xpath("//name").collect do |lines|
 				lines = lines.text
-				@lines = lines[0..9]
+				@lines = lines
 			end
 	end
 
 	def service_list
 		@doc.xpath("//status").collect do |status|
 			 status = status.text
-			 @status = status[0...9]
+			 @status = status
 		end
 	end
 
-	# def service_hash
-	# 	@lines.each |lines|
+	def output
+	 subway_list.zip(service_list)[0..9]
 
+	end
 
-	# 	@subway_hash 
-	# end
+	def service_hash
+		output.each do |subway_status_pair|
+			@subway_hash[subway_status_pair[0]] = subway_status_pair[1]
+		end
+		 @subway_hash 
+	end
 end
 
 service = Service.new
