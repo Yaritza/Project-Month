@@ -4,7 +4,7 @@ require 'pry'
 
 class Service
 
-	attr_accessor :doc, :lines, :status, :subway_hash
+	attr_accessor :doc, :lines, :status, :subway_hash, :description
 
 	def initialize
 
@@ -12,10 +12,11 @@ class Service
 		@status = []
 		@subway_hash = {}
 		#@trainline = trainline
+		@description = []
 		@doc = Nokogiri::XML(open("http://web.mta.info/status/serviceStatus.txt"))
 	end
 
-	def subway_list
+	def lines
 		#Hard coding  for a test-line.
 		#@trainline = NQR
 		#Subway details are in parent <subway> tag
@@ -38,8 +39,7 @@ class Service
 	end
 
 	def output
-	 subway_list.zip(service_list)[0..9]
-
+	 lines.zip(service_list)[0..9]
 	end
 
 	def service_hash
@@ -47,6 +47,14 @@ class Service
 			@subway_hash[subway_status_pair[0]] = subway_status_pair[1]
 		end
 		 @subway_hash 
+	end
+	def descriptive_status
+		@doc.xpath("//text").collect do  |tag_contents|
+			text =  tag_contents.text
+			@description << text
+		end
+			@description
+		
 	end
 end
 
