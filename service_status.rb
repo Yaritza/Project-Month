@@ -55,14 +55,21 @@ class Service
 	end
 
 	def descriptive_status
-		@doc.xpath("//line").collect do |line|
+		@doc.xpath('//subway//line').each do |line|
 			puts "******************************"
 			train_name = line.at_css("/name").text
 			puts train_name
 			train_status = line.at_css("status").text
 			puts train_status
-			descriptive_status = line.children[5]
+			descriptive_status = line.xpath("text")
 			
+			html = Nokogiri::HTML(descriptive_status.text)
+			
+			html.css(".plannedWorkDetailLink").each do |detail|
+				puts train_name
+				puts "----------------"
+				puts detail.children.text
+			end
 
 			if train_status == "GOOD SERVICE"
 				puts "Hooray! Good train service today!"
@@ -85,6 +92,5 @@ end
 
  service = Service.new
  service.descriptive_status
- binding.pry
  #testing:
  #line_result = service.doc.xpath("//subway").xpath("//line").first
