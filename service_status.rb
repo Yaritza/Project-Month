@@ -61,16 +61,8 @@ class Service
 			puts train_name
 			train_status = line.at_css("status").text
 			puts train_status
-			# binding.pry if train_name == "G"
-			# descriptive_status = line.children[5].children[0] # .text
-			# puts "here is line before the child elements: ",line
 			descriptive_status = line.children[5]
 			
-			# if descriptive_status != nil 
-			# 	final_description = descriptive_status.to_s
-			# 	puts "HERE "
-			# 	puts final_description.scan(/\<\p\>/)
-			# end
 
 			if train_status == "GOOD SERVICE"
 				puts "Hooray! Good train service today!"
@@ -79,12 +71,12 @@ class Service
 				puts "here is the description: "
 				status_text = descriptive_status.text
 				cleaned_status = status_text.scan(/<br\/><br\/>(.+)<br\/><br\/>/m) # slightly working 
-				if cleaned_status
-					
+				
+				new_clean_status = cleaned_status.flatten
+
+				new_clean_status.each do |line_info|
+					puts line_info.gsub(/<(\/)*(\w)+(\s)*(\/)*>/m, "")
 				end 
-				# puts final_description.inspect
-				# final_status = final_description.split(/[&lt;P&gt;].../)
-				# puts final_status
 			end 
 		end 
 		@description
