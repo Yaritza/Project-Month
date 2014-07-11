@@ -4,12 +4,13 @@ require 'pry'
 
 class Service
 
-	attr_accessor :doc, :lines, :status, :subway_hash
+	attr_accessor :doc, :lines, :status, :subway_hash, :description
 
 	def initialize
 
 		@lines = []
 		@status = []
+		@description = []
 		@subway_hash = {}
 		#@trainline = trainline
 		@doc = Nokogiri::XML(open("http://web.mta.info/status/serviceStatus.txt"))
@@ -48,11 +49,50 @@ class Service
 		end
 		 @subway_hash 
 	end
+
+	def print_out
+		puts @doc
+	end
+
+	def descriptive_status
+		@doc.xpath("//line").collect do |line|
+			puts "******************************"
+			train_name = line.at_css("/name").text
+			puts train_name
+			train_status = line.at_css("status").text
+			puts train_status
+			# binding.pry if train_name == "G"
+			# descriptive_status = line.children[5].children[0] # .text
+			# puts "here is line before the child elements: ",line
+			descriptive_status = line.children[5]
+			
+			# if descriptive_status != nil 
+			# 	final_description = descriptive_status.to_s
+			# 	puts "HERE "
+			# 	puts final_description.scan(/\<\p\>/)
+			# end
+
+			if train_status == "GOOD SERVICE"
+				puts "Hooray! Good train service today!"
+			else 
+				puts "Give yourself extra time. There are issues with your line."
+				puts "here is the description: "
+				status_text = descriptive_status.text
+				cleaned_status = status_text.scan(/<br\/><br\/>(.+)<br\/><br\/>/m) # slightly working 
+				if cleaned_status
+					
+				end 
+				# puts final_description.inspect
+				# final_status = final_description.split(/[&lt;P&gt;].../)
+				# puts final_status
+			end 
+		end 
+		@description
+	end
 end
 
-service = Service.new
-#testing:
-#line_result = service.doc.xpath("//subway").xpath("//line").first
-
-
-binding.pry
+ service = Service.new
+ service.descriptive_status
+ binding.pry
+ #testing:
+ #line_result = service.doc.xpath("//subway").xpath("//line").first
